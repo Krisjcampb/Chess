@@ -25,10 +25,17 @@ class Chess:
 	
 	def player1move(self, board, turn, game):
 		#input move using chess coordinates
+		coordinate1 = input("What piece would you like to move?: ")
+		y_axis = ord(coordinate1[0].upper())-64
+		x_axis = int(coordinate1[1])-1
+		currentpiece = board[abs(y_axis - 8)][x_axis]
+		print(currentpiece)
+
 		#check valid input
 		#board mutation
 		print("white")
 		c.playerturn(turn, board, game)
+		
 	def player2move(self, board, turn, game):
 		print("black")
 		c.playerturn(turn, board, game)
