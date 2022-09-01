@@ -7,11 +7,11 @@ class Chess:
         ["-", "h", "b", "k", "q", "b", "h", "r"],
         ["p", "p", "p", "p", "p", "p", "p", "p"],
         ["-", "-", "-", "-", "-", "-", "-", "-"],
-        ["-", "-", "-", "r", "-", "-", "-", "-"],
-        ["-", "-", "-", "-", "-", "-", "-", "P"],
-        ["-", "-", "-", "R", "-", "-", "-", "-"],
-        ["P", "P", "P", "P", "P", "P", "P", "-"],
-        ["R", "H", "B", "K", "Q", "B", "H", "-"],
+        ["-", "-", "-", "r", "-", "P", "-", "-"],
+        ["-", "-", "-", "-", "-", "-", "-", "-"],
+        ["-", "-", "-", "B", "-", "-", "R", "-"],
+        ["P", "P", "P", "P", "P", "P", "P", "P"],
+        ["R", "H", "B", "-", "Q", "B", "H", "R"],
     ]
 
     def printboard(self, board):
@@ -100,6 +100,14 @@ class Chess:
                 self.queenmove(y1_axis, x1_axis, y2_axis, x2_axis, board)
                 break
 
+    def sign(self, x):
+        if x < 0:
+            return -1
+        elif x == 0:
+            return 0
+        else:
+            return 1
+
     def pawnmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board, color):
         pathlength = abs(y1_axis - y2_axis)
         if color == "white":
@@ -137,41 +145,38 @@ class Chess:
             c.printboard(board)
 
     def bishopmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
-        def sign(x): return (1, -1)[x < 0]
-
         pathlength = abs(y1_axis - y2_axis)
-        incx, incy = sign(x2_axis-x1_axis), sign(y2_axis-y1_axis)
+        incx, incy = c.sign(x2_axis-x1_axis), c.sign(y2_axis-y1_axis)
+        if (incx == 0 or incy == 0):
+            print("Invalid move. Please input a new move.0")
+            return
+        # Above Good
         x, y = x1_axis, y1_axis
-
+        print(incx, incy)
         for i in range(1, pathlength):
             x += incx
             y += incy
             print(y+1, x+1)
-            if(board[y][x] == "-"):
+            if (board[y][x] == "-" and (y != y2_axis and x != x2_axis)):
                 continue
             else:
-                print("Invalid move. Please input a new move.")
+                print("Invalid move. Please input a new move.1")
                 return
 
-        if board[y2_axis][x2_axis].islower():
-            currentpiece = board[y1_axis][x1_axis]
-            board[y1_axis][x1_axis] = "-"
-            board[y2_axis][x2_axis] = currentpiece
+        if board[y1_axis][x1_axis].isupper():
+            if board[y2_axis][x2_axis].islower() or board[y2_axis][x2_axis] == "-":
+                currentpiece = board[y1_axis][x1_axis]
+                board[y1_axis][x1_axis] = "-"
+                board[y2_axis][x2_axis] = currentpiece
+            else:
+                print("Invalid move. Please input a new move.2")
         else:
-            print("Invalid move. Please input a new move.")
+            print("Invalid move. Please input a new move.3")
             return
         c.printboard(board)
 
     def knightmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         return
-
-    def sign(self, x):
-        if x < 0:
-            return -1
-        elif x == 0:
-            return 0
-        else:
-            return 1
 
     def rookmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         while x1_axis != x2_axis and y1_axis != y2_axis:
@@ -184,10 +189,10 @@ class Chess:
         incx, incy = c.sign(x2_axis-x1_axis), c.sign(y2_axis-y1_axis)
         x, y = x1_axis, y1_axis
 
-        for i in range(0, pathlength):
+        for i in range(1, pathlength):
             x += incx
             y += incy
-            if(board[y][x] == "-" and (y == y2_axis or x == x2_axis)):
+            if (board[y][x] == "-" and (y == y2_axis or x == x2_axis)):
                 continue
             else:
                 print("Invalid move. Please input a new move.")
@@ -220,7 +225,7 @@ class Chess:
             x += incx
             y += incy
             print(y+1, x+1)
-            if(board[y][x] == "-"):
+            if (board[y][x] == "-"):
                 continue
             else:
                 print("Invalid move. Please input a new move.")
@@ -248,7 +253,7 @@ class Chess:
             x += incx
             y += incy
             print(y+1, x+1)
-            if(board[y][x] == "-"):
+            if (board[y][x] == "-"):
                 continue
             else:
                 print("Invalid move. Please input a new move.")
