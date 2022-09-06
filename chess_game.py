@@ -7,7 +7,7 @@ class Chess:
         ["-", "h", "b", "k", "q", "b", "h", "r"],
         ["p", "p", "p", "p", "p", "p", "p", "p"],
         ["-", "-", "-", "-", "-", "-", "-", "-"],
-        ["-", "-", "-", "r", "-", "P", "-", "-"],
+        ["-", "-", "H", "r", "-", "P", "-", "-"],
         ["-", "-", "-", "-", "-", "-", "-", "-"],
         ["-", "-", "-", "B", "-", "-", "R", "-"],
         ["P", "P", "P", "P", "P", "P", "P", "P"],
@@ -109,6 +109,7 @@ class Chess:
             return 1
 
     def pawnmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board, color):
+
         pathlength = abs(y1_axis - y2_axis)
         if color == "white":
             for i in range(1, pathlength):
@@ -144,13 +145,13 @@ class Chess:
                 return
             c.printboard(board)
 
+    # Proper Rules
     def bishopmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         pathlength = abs(y1_axis - y2_axis)
         incx, incy = c.sign(x2_axis-x1_axis), c.sign(y2_axis-y1_axis)
         if (incx == 0 or incy == 0):
             print("Invalid move. Please input a new move.0")
             return
-        # Above Good
         x, y = x1_axis, y1_axis
         print(incx, incy)
         for i in range(1, pathlength):
@@ -176,8 +177,19 @@ class Chess:
         c.printboard(board)
 
     def knightmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
+        if (abs(x1_axis - x2_axis) == 1 and abs(y1_axis - y2_axis) == 2) or (abs(x1_axis - x2_axis) == 2 and abs(y1_axis - y2_axis) == 1):
+            if (board[y2_axis][x2_axis] == "-" or board[y2_axis][x2_axis].islower()):
+                board[y2_axis][x2_axis] = board[y1_axis][x1_axis]
+                board[y1_axis][x1_axis] = "-"
+                c.printboard(board)
+                return
+            else:
+                print("Invalid target.")
+                return
+        print("Please input valid move.")
         return
 
+    # Proper Rules
     def rookmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         while x1_axis != x2_axis and y1_axis != y2_axis:
             print("Please input a valid move coordinate.")
