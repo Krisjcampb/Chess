@@ -4,14 +4,14 @@ import math
 
 class Chess:
     board = [
-        ["-", "h", "b", "k", "q", "b", "h", "r"],
+        ["r", "h", "b", "k", "q", "b", "h", "r"],
         ["p", "p", "p", "p", "p", "p", "p", "p"],
         ["-", "-", "-", "-", "-", "-", "-", "-"],
-        ["-", "-", "H", "r", "-", "P", "-", "-"],
         ["-", "-", "-", "-", "-", "-", "-", "-"],
-        ["-", "-", "-", "B", "-", "-", "R", "-"],
+        ["-", "-", "-", "Q", "-", "-", "-", "-"],
+        ["-", "-", "-", "-", "-", "-", "-", "-"],
         ["P", "P", "P", "P", "P", "P", "P", "P"],
-        ["R", "H", "B", "-", "Q", "B", "H", "R"],
+        ["R", "H", "B", "K", "Q", "B", "H", "R"],
     ]
 
     def printboard(self, board):
@@ -41,7 +41,7 @@ class Chess:
                 print("Please input a valid move. is white")
 
         print(currentpiece)
-        c.movevalidation(board, coordinate1, currentpiece, "white")
+        c.movevalidation(board, coordinate1, currentpiece)
         c.playerturn(turn, board, game)
 
     def player2move(self, board, turn, game):
@@ -57,7 +57,7 @@ class Chess:
                 print("Please input a valid move. is black")
 
         print(currentpiece)
-        c.movevalidation(board, coordinate1, currentpiece, "black")
+        c.movevalidation(board, coordinate1, currentpiece)
         c.playerturn(turn, board, game)
 
     def coordYhelper(self, coordinate):
@@ -66,7 +66,7 @@ class Chess:
     def coordXhelper(self, coordinate):
         return int(coordinate[1])-1
 
-    def movevalidation(self, board, coordinate1, currentpiece, color):
+    def movevalidation(self, board, coordinate1, currentpiece):
         while True:
             coordinate2 = input("Where is the piece moving to?: ")
 
@@ -77,7 +77,7 @@ class Chess:
             x2_axis = self.coordXhelper(coordinate2)
 
             if currentpiece.lower() == "p":
-                self.pawnmove(y1_axis, x1_axis, y2_axis, x2_axis, board, color)
+                self.pawnmove(y1_axis, x1_axis, y2_axis, x2_axis, board)
                 break
 
             if currentpiece.lower() == "h":
@@ -108,42 +108,38 @@ class Chess:
         else:
             return 1
 
-    def pawnmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board, color):
-
+    def pawnmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         pathlength = abs(y1_axis - y2_axis)
-        if color == "white":
-            for i in range(1, pathlength):
-                if board[y1_axis-i][x1_axis] == "-":
-                    continue
-                else:
-                    print("Invalid move.")
-                    return
+        currentpiece = board[y1_axis][x1_axis]
 
-            if board[y2_axis][x2_axis] == "-" and y2_axis < y1_axis and x1_axis == x2_axis:
-                currentpiece = board[y1_axis][x1_axis]
-                board[y1_axis][x1_axis] = "-"
+        # black piece
+        if board[y1_axis][x1_axis].islower():
+            if board[y2_axis][x2_axis].isupper() and y2_axis == y1_axis+1 and (x2_axis == x1_axis + 1 or x2_axis == x1_axis - 1):
+                board[y1_axis][x1_axis] = '-'
                 board[y2_axis][x2_axis] = currentpiece
-            else:
-                print("Invalid move. Please input a new move. not correct pawn white")
-                return
-            c.printboard(board)
+            if y1_axis == 1 and pathlength == 2:
+                if board[y1_axis+1][x1_axis] == '-' and board[y1_axis+2][x1_axis] == '-':
+                    board[y1_axis][x1_axis] = '-'
+                    board[y2_axis][x2_axis] = currentpiece
+            elif pathlength == 1:
+                if board[y1_axis+1][x1_axis] == '-':
+                    board[y1_axis][x1_axis] = '-'
+                    board[y2_axis][x2_axis] = currentpiece
 
-        if color == "black":
-            for i in range(1, pathlength):
-                if board[y1_axis-i][x1_axis] == "-":
-                    continue
-                else:
-                    print("Invalid move.")
-                    return
-
-            if board[y2_axis][x2_axis] == "-" and y2_axis > y1_axis and x1_axis == x2_axis:
-                currentpiece = board[y1_axis][x1_axis]
-                board[y1_axis][x1_axis] = "-"
+        # white piece
+        if board[y1_axis][x1_axis].isupper():
+            if board[y2_axis][x2_axis].islower() and y2_axis == y1_axis-1 and (x2_axis == x1_axis + 1 or x2_axis == x1_axis - 1):
+                board[y1_axis][x1_axis] = '-'
                 board[y2_axis][x2_axis] = currentpiece
-            else:
-                print("Invalid move. Please input a new move. not correct pawn black")
-                return
-            c.printboard(board)
+            if y1_axis == 6 and pathlength == 2:
+                if board[y1_axis-1][x1_axis] == '-' and board[y1_axis-2][x1_axis] == '-':
+                    board[y1_axis][x1_axis] = '-'
+                    board[y2_axis][x2_axis] = currentpiece
+            elif pathlength == 1:
+                if board[y1_axis-1][x1_axis] == '-':
+                    board[y1_axis][x1_axis] = '-'
+                    board[y2_axis][x2_axis] = currentpiece
+        c.printboard(board)
 
     # Proper Rules
     def bishopmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
@@ -171,18 +167,33 @@ class Chess:
                 board[y2_axis][x2_axis] = currentpiece
             else:
                 print("Invalid move. Please input a new move.2")
+        elif board[y1_axis][x1_axis].islower():
+            if board[y2_axis][x2_axis].isupper() or board[y2_axis][x2_axis] == "-":
+                currentpiece = board[y1_axis][x1_axis]
+                board[y1_axis][x1_axis] = "-"
+                board[y2_axis][x2_axis] = currentpiece
+            else:
+                print("Invalid move. Please input a new move.2")
         else:
             print("Invalid move. Please input a new move.3")
             return
         c.printboard(board)
 
+    # Proper Rules
     def knightmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         if (abs(x1_axis - x2_axis) == 1 and abs(y1_axis - y2_axis) == 2) or (abs(x1_axis - x2_axis) == 2 and abs(y1_axis - y2_axis) == 1):
-            if (board[y2_axis][x2_axis] == "-" or board[y2_axis][x2_axis].islower()):
-                board[y2_axis][x2_axis] = board[y1_axis][x1_axis]
-                board[y1_axis][x1_axis] = "-"
-                c.printboard(board)
-                return
+            if(board[y1_axis][x1_axis].isupper()):
+                if(board[y2_axis][x2_axis] == "-" or board[y2_axis][x2_axis].islower()):
+                    board[y2_axis][x2_axis] = board[y1_axis][x1_axis]
+                    board[y1_axis][x1_axis] = "-"
+                    c.printboard(board)
+                    return
+            if(board[y1_axis][x1_axis].islower()):
+                if(board[y2_axis][x2_axis] == "-" or board[y2_axis][x2_axis].isupper()):
+                    board[y2_axis][x2_axis] = board[y1_axis][x1_axis]
+                    board[y1_axis][x1_axis] = "-"
+                    c.printboard(board)
+                    return
             else:
                 print("Invalid target.")
                 return
@@ -227,32 +238,40 @@ class Chess:
         c.printboard(board)
 
     def queenmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
-        def sign(x): return (1, -1)[x < 0]
+        while x1_axis != x2_axis and y1_axis != y2_axis:
+            print("Please input a valid move coordinate.")
+            coordinate2 = input("Where is the piece moving to?: ")
+            y2_axis = self.coordYhelper(coordinate2)
+            x2_axis = self.coordXhelper(coordinate2)
 
         pathlength = abs(y1_axis - y2_axis)
-        incx, incy = sign(x2_axis-x1_axis), sign(y2_axis-y1_axis)
+        incx, incy = c.sign(x2_axis-x1_axis), c.sign(y2_axis-y1_axis)
         x, y = x1_axis, y1_axis
 
         for i in range(1, pathlength):
             x += incx
             y += incy
-            print(y+1, x+1)
-            if (board[y][x] == "-"):
+            if (board[y][x] == "-" and (y == y2_axis or x == x2_axis)):
                 continue
             else:
                 print("Invalid move. Please input a new move.")
-                return
+                return c.rookmove(y1_axis, x1_axis, y2_axis, x2_axis, board)
 
-        if board[y2_axis][x2_axis].islower():
-            currentpiece = board[y1_axis][x1_axis]
-            board[y1_axis][x1_axis] = "-"
-            board[y2_axis][x2_axis] = currentpiece
+        if board[y1_axis][x1_axis].isupper():
+            if board[y2_axis][x2_axis].islower() or board[y2_axis][x2_axis] == "-":
+                currentpiece = board[y1_axis][x1_axis]
+                board[y1_axis][x1_axis] = "-"
+                board[y2_axis][x2_axis] = currentpiece
+            else:
+                print("Invalid move. Please input a new move.")
         else:
-            print("Invalid move. Please input a new move.")
-            return
+            if board[y2_axis][x2_axis].isupper() or board[y2_axis][x2_axis] == "-":
+                currentpiece = board[y1_axis][x1_axis]
+                board[y1_axis][x1_axis] = "-"
+                board[y2_axis][x2_axis] = currentpiece
+            else:
+                print("Invalid move. Please input a new move.")
         c.printboard(board)
-
-        return
 
     def kingmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         def sign(x): return (1, -1)[x < 0]
