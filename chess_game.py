@@ -4,11 +4,11 @@ import math
 
 class Chess:
     board = [
-        ["r", "h", "b", "k", "q", "b", "h", "r"],
+        ["-", "h", "b", "k", "q", "b", "h", "-"],
         ["p", "p", "p", "p", "p", "p", "p", "p"],
+        ["-", "-", "-", "", "-", "-", "-", "-"],
         ["-", "-", "-", "-", "-", "-", "-", "-"],
-        ["-", "-", "-", "-", "-", "-", "-", "-"],
-        ["-", "-", "-", "Q", "-", "-", "-", "-"],
+        ["K", "-", "-", "r", "-", "-", "-", "-"],
         ["-", "-", "-", "-", "-", "-", "-", "-"],
         ["P", "P", "P", "P", "P", "P", "P", "P"],
         ["R", "H", "B", "K", "Q", "B", "H", "R"],
@@ -108,6 +108,7 @@ class Chess:
         else:
             return 1
 
+    # Not Done
     def pawnmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         pathlength = abs(y1_axis - y2_axis)
         currentpiece = board[y1_axis][x1_axis]
@@ -141,9 +142,9 @@ class Chess:
                     board[y2_axis][x2_axis] = currentpiece
         c.printboard(board)
 
-    # Proper Rules
+    # Done
     def bishopmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
-        pathlength = abs(y1_axis - y2_axis)
+        pathlength = max(abs(y1_axis - y2_axis), abs(x1_axis - x2_axis))
         incx, incy = c.sign(x2_axis-x1_axis), c.sign(y2_axis-y1_axis)
         if (incx == 0 or incy == 0):
             print("Invalid move. Please input a new move.0")
@@ -179,7 +180,7 @@ class Chess:
             return
         c.printboard(board)
 
-    # Proper Rules
+    # Done
     def knightmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         if (abs(x1_axis - x2_axis) == 1 and abs(y1_axis - y2_axis) == 2) or (abs(x1_axis - x2_axis) == 2 and abs(y1_axis - y2_axis) == 1):
             if(board[y1_axis][x1_axis].isupper()):
@@ -200,7 +201,7 @@ class Chess:
         print("Please input valid move.")
         return
 
-    # Proper Rules
+    # Done
     def rookmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         while x1_axis != x2_axis and y1_axis != y2_axis:
             print("Please input a valid move coordinate.")
@@ -208,7 +209,7 @@ class Chess:
             y2_axis = self.coordYhelper(coordinate2)
             x2_axis = self.coordXhelper(coordinate2)
 
-        pathlength = abs(y1_axis - y2_axis)
+        pathlength = max(abs(y1_axis - y2_axis), abs(x1_axis - x2_axis))
         incx, incy = c.sign(x2_axis-x1_axis), c.sign(y2_axis-y1_axis)
         x, y = x1_axis, y1_axis
 
@@ -237,42 +238,51 @@ class Chess:
                 print("Invalid move. Please input a new move.")
         c.printboard(board)
 
+    # Done
     def queenmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
-        while x1_axis != x2_axis and y1_axis != y2_axis:
-            print("Please input a valid move coordinate.")
-            coordinate2 = input("Where is the piece moving to?: ")
-            y2_axis = self.coordYhelper(coordinate2)
-            x2_axis = self.coordXhelper(coordinate2)
-
-        pathlength = abs(y1_axis - y2_axis)
+        pathlength = max(abs(y1_axis - y2_axis), abs(x1_axis - x2_axis))
         incx, incy = c.sign(x2_axis-x1_axis), c.sign(y2_axis-y1_axis)
         x, y = x1_axis, y1_axis
 
-        for i in range(1, pathlength):
-            x += incx
-            y += incy
-            if (board[y][x] == "-" and (y == y2_axis or x == x2_axis)):
-                continue
-            else:
-                print("Invalid move. Please input a new move.")
-                return c.rookmove(y1_axis, x1_axis, y2_axis, x2_axis, board)
-
+        if(x1_axis == x2_axis or y1_axis == y2_axis):
+            for i in range(1, pathlength):
+                x += incx
+                y += incy
+                if (board[y][x] == "-" and (y == y2_axis or x == x2_axis)):
+                    continue
+                else:
+                    print("Invalid move. Please input a new move.")
+                    return c.queenmove(y1_axis, x1_axis, y2_axis, x2_axis, board)
+        else:
+            for i in range(1, pathlength):
+                x += incx
+                y += incy
+                print(y+1, x+1)
+                if (board[y][x] == "-" and (y != y2_axis and x != x2_axis)):
+                    continue
+                else:
+                    print("Invalid move. Please input a new move.1")
+                    return
         if board[y1_axis][x1_axis].isupper():
             if board[y2_axis][x2_axis].islower() or board[y2_axis][x2_axis] == "-":
                 currentpiece = board[y1_axis][x1_axis]
                 board[y1_axis][x1_axis] = "-"
                 board[y2_axis][x2_axis] = currentpiece
             else:
-                print("Invalid move. Please input a new move.")
-        else:
+                print("Invalid move. Please input a new move.2")
+        elif board[y1_axis][x1_axis].islower():
             if board[y2_axis][x2_axis].isupper() or board[y2_axis][x2_axis] == "-":
                 currentpiece = board[y1_axis][x1_axis]
                 board[y1_axis][x1_axis] = "-"
                 board[y2_axis][x2_axis] = currentpiece
             else:
-                print("Invalid move. Please input a new move.")
+                print("Invalid move. Please input a new move.2")
+        else:
+            print("Invalid move. Please input a new move.3")
+            return
         c.printboard(board)
 
+    # Not Done
     def kingmove(self, y1_axis, x1_axis, y2_axis, x2_axis, board):
         def sign(x): return (1, -1)[x < 0]
 
@@ -301,7 +311,59 @@ class Chess:
 
         return
 
+    def kingcheck(self, board, ):
+        for i in range(len(board)):
+            for j in range(len(board)):
+                if board[i][j].lower() == 'p' and board[i][j].islower():
+                    continue
+                if board[i][j].lower() == 'h' and board[i][j].islower():
+                    continue
+                if board[i][j].lower() == 'b' and board[i][j].islower():
+                    continue
+                if board[i][j].lower() == 'r' and board[i][j].islower():
+                    up = True
+                    left = True
+                    right = True
+                    down = True
+                    for c in range(1, 7):
+                        if right == True:
+                            if j+c < 8 and board[i][j+c] == 'K':
+                                print("Check")
+                            if j+c > 7 or board[i][j+c].islower() or board[i][j+c].isupper():
+                                right = False
+                        if left == True:
+                            if board[i][j-c] == 'K' and j-c > -1:
+                                print("Check")
+                            if board[i][j-c].islower() or board[i][j-c].isupper():
+                                left = False
+                        if up == True:
+                            if board[i+c][j] == 'K' and i+c < 8:
+                                print("Check")
+                            if board[i+c][j].islower() or board[i+c][j].isupper():
+                                up = False
+                        if down == True:
+                            if board[i-c][j] == 'K' and i-c > 0:
+                                print("Check")
+                            if board[i-c][j].islower() or board[i-c][j].isupper():
+                                down = False
+                if board[i][j].lower() == 'q' and board[i][j].islower():
+                    continue
+
+                if board[i][j].lower() == 'p' and board[i][j].isupper():
+                    continue
+                if board[i][j].lower() == 'h' and board[i][j].isupper():
+                    continue
+                if board[i][j].lower() == 'b' and board[i][j].isupper():
+                    continue
+                if board[i][j].lower() == 'r' and board[i][j].isupper():
+                    continue
+                if board[i][j].lower() == 'q' and board[i][j].isupper():
+                    continue
+        input()
+        return
+
 
 c = Chess()
+c.kingcheck(c.board)
 c.printboard(c.board)
 c.playerturn(True, True, c.board)
