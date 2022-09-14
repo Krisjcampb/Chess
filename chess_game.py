@@ -4,11 +4,11 @@ import math
 
 class Chess:
     board = [
-        ["-", "h", "b", "k", "q", "b", "h", "-"],
+        ["-", "h", "p", "k", "q", "p", "h", "-"],
         ["p", "p", "p", "p", "p", "p", "p", "p"],
-        ["-", "-", "-", "", "-", "-", "-", "-"],
         ["-", "-", "-", "-", "-", "-", "-", "-"],
-        ["K", "-", "-", "r", "-", "-", "-", "-"],
+        ["-", "-", "-", "-", "-", "-", "-", "-"],
+        ["-", "-", "-", "-", "-", "-", "-", "-"],
         ["-", "-", "-", "-", "-", "-", "-", "-"],
         ["P", "P", "P", "P", "P", "P", "P", "P"],
         ["R", "H", "B", "K", "Q", "B", "H", "R"],
@@ -314,12 +314,71 @@ class Chess:
     def kingcheck(self, board, ):
         for i in range(len(board)):
             for j in range(len(board)):
+                # Done
                 if board[i][j].lower() == 'p' and board[i][j].islower():
-                    continue
+                    if i+1 < 8 and j-1 > 0:
+                        if board[i+1][j-1] == 'K':
+                            print("Check")
+                    if i+1 < 8 and j+1 < 8:
+                        if board[i+1][j+1] == 'K':
+                            print("Check")
+                # Done
                 if board[i][j].lower() == 'h' and board[i][j].islower():
-                    continue
+                    if i+2 < 8 and j+1 < 8:
+                        if board[i+2][j+1] == 'K':
+                            print("Check")
+                    if i+2 < 8 and j-1 > 0:
+                        if board[i+2][j-1] == 'K':
+                            print("Check")
+                    if i-2 > 0 and j+1 < 8:
+                        if board[i-2][j+1] == 'K':
+                            print("Check")
+                    if i-2 > 0 and j-1 < 8:
+                        if board[i-2][j-1] == 'K':
+                            print("Check")
+                    if i+1 < 8 and j+2 < 8:
+                        if board[i+1][j+2] == 'K':
+                            print("Check")
+                    if i-1 > 0 and j+2 < 8:
+                        if board[i-1][j+2] == 'K':
+                            print("Check")
+                    if i+1 < 8 and j-2 > 0:
+                        if board[i+1][j-2] == 'K':
+                            print("Check")
+                    if i-1 > 0 and j-2 > 0:
+                        if board[i-1][j-2] == 'K':
+                            print("Check")
+                # Done
                 if board[i][j].lower() == 'b' and board[i][j].islower():
-                    continue
+                    leftup = True
+                    leftdown = True
+                    rightup = True
+                    rightdown = True
+                    for c in range(1, 7):
+                        if leftup == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                leftup = False
+
+                        if leftdown == True:
+                            if j-c < 0 and i-c < 0 and board[i-c][j-c] == 'K':
+                                print("Check")
+                            if j-c > 7 or i-c < 0 or board[i-c][j-c].islower() or board[i-c][j-c].isupper():
+                                leftdown = False
+
+                        if rightup == True:
+                            if j+c < 8 and i+c < 8 and board[i+c][j+c] == 'K':
+                                print("Check")
+                            if j+c > 7 or i+c > 7 or board[i+c][j+c].islower() or board[i+c][j+c].isupper():
+                                rightup = False
+
+                        if rightdown == True:
+                            if j+c < 8 and i-c > 0 and board[i-c][j+c] == 'K':
+                                print("Check")
+                            if j+c > 7 or i-c < 0 and board[i-c][j+c].islower() or board[i-c][j+c].isupper():
+                                rightdown = False
+                # Done
                 if board[i][j].lower() == 'r' and board[i][j].islower():
                     up = True
                     left = True
@@ -346,19 +405,201 @@ class Chess:
                                 print("Check")
                             if board[i-c][j].islower() or board[i-c][j].isupper():
                                 down = False
+                # Done
                 if board[i][j].lower() == 'q' and board[i][j].islower():
-                    continue
+                    upleft = True
+                    up = True
+                    upright = True
+                    right = True
+                    downright = True
+                    down = True
+                    downleft = True
+                    left = True
 
+                    for c in range(1, 7):
+                        if upleft == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                leftup = False
+                        if up == True:
+                            if i+c < 8 and board[i+c][j] == 'K':
+                                print("Check")
+                            if i+c > 7 or board[i+c][j].islower() or board[i+c][j].isupper():
+                                up = False
+                        if upright == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                upright = False
+                        if right == True:
+                            if j+c < 8 and board[i][j+c] == 'K':
+                                print("Check")
+                            if j+c > 7 or board[i][j+c].islower() or board[i][j+c].isupper():
+                                right = False
+                        if downright == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                downright = False
+                        if down == True:
+                            if i-c > -1 and board[i-c][j] == 'K':
+                                print("Check")
+                            if i-c < 0 or board[i-c][j].islower() or board[i-c][j].isupper():
+                                down = False
+                        if downleft == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                downleft = False
+                        if left == True:
+                            if j-c > -1 and board[i][j-c] == 'K':
+                                print("Check")
+                            if j-c < 0 or board[i][j-c].islower() or board[i][j-c].isupper():
+                                left = False
+                # Done
                 if board[i][j].lower() == 'p' and board[i][j].isupper():
-                    continue
+                    if i-1 > 0 and j-1 > 0:
+                        if board[i-1][j-1] == 'k':
+                            print("Check")
+                    if i-1 > 0 and j+1 < 8:
+                        if board[i-1][j+1] == 'k':
+                            print("Check")
+                # Done
                 if board[i][j].lower() == 'h' and board[i][j].isupper():
-                    continue
+                    if i+2 < 8 and j+1 < 8:
+                        if board[i+2][j+1] == 'k':
+                            print("Check")
+                    if i+2 < 8 and j-1 > 0:
+                        if board[i+2][j-1] == 'k':
+                            print("Check")
+                    if i-2 > 0 and j+1 < 8:
+                        if board[i-2][j+1] == 'k':
+                            print("Check")
+                    if i-2 > 0 and j-1 < 8:
+                        if board[i-2][j-1] == 'k':
+                            print("Check")
+                    if i+1 < 8 and j+2 < 8:
+                        if board[i+1][j+2] == 'k':
+                            print("Check")
+                    if i-1 > 0 and j+2 < 8:
+                        if board[i-1][j+2] == 'k':
+                            print("Check")
+                    if i+1 < 8 and j-2 > 0:
+                        if board[i+1][j-2] == 'k':
+                            print("Check")
+                    if i-1 > 0 and j-2 > 0:
+                        if board[i-1][j-2] == 'k':
+                            print("Check")
+                # Done
                 if board[i][j].lower() == 'b' and board[i][j].isupper():
-                    continue
+                    leftup = True
+                    leftdown = True
+                    rightup = True
+                    rightdown = True
+                    for c in range(1, 7):
+                        if leftup == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'k':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                leftup = False
+
+                        if leftdown == True:
+                            if j-c < 0 and i-c < 0 and board[i-c][j-c] == 'k':
+                                print("Check")
+                            if j-c > 7 or i-c < 0 or board[i-c][j-c].islower() or board[i-c][j-c].isupper():
+                                leftdown = False
+
+                        if rightup == True:
+                            if j+c < 8 and i+c < 8 and board[i+c][j+c] == 'k':
+                                print("Check")
+                            if j+c > 7 or i+c > 7 or board[i+c][j+c].islower() or board[i+c][j+c].isupper():
+                                rightup = False
+
+                        if rightdown == True:
+                            if j+c < 8 and i-c > 0 and board[i-c][j+c] == 'k':
+                                print("Check")
+                            if j+c > 7 or i-c < 0 and board[i-c][j+c].islower() or board[i-c][j+c].isupper():
+                                rightdown = False
+                # Done
                 if board[i][j].lower() == 'r' and board[i][j].isupper():
-                    continue
+                    up = True
+                    left = True
+                    right = True
+                    down = True
+                    for c in range(1, 7):
+                        if right == True:
+                            if j+c < 8 and board[i][j+c] == 'k':
+                                print("Check")
+                            if j+c > 7 or board[i][j+c].islower() or board[i][j+c].isupper():
+                                right = False
+                        if left == True:
+                            if board[i][j-c] == 'k' and j-c > -1:
+                                print("Check")
+                            if board[i][j-c].islower() or board[i][j-c].isupper():
+                                left = False
+                        if up == True:
+                            if i+c < 8 and board[i+c][j] == 'k':
+                                print("Check")
+                            if i+c > 7 or board[i+c][j].islower() or board[i+c][j].isupper():
+                                up = False
+                        if down == True:
+                            if board[i-c][j] == 'k' and i-c > 0:
+                                print("Check")
+                            if i-c < 0 or board[i-c][j].islower() or board[i-c][j].isupper():
+                                down = False
+                # Done
                 if board[i][j].lower() == 'q' and board[i][j].isupper():
-                    continue
+                    upleft = True
+                    up = True
+                    upright = True
+                    right = True
+                    downright = True
+                    down = True
+                    downleft = True
+                    left = True
+
+                    for c in range(1, 7):
+                        if upleft == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'k':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                leftup = False
+                        if up == True:
+                            if i+c < 8 and board[i+c][j] == 'k':
+                                print("Check")
+                            if i+c > 7 or board[i+c][j].islower() or board[i+c][j].isupper():
+                                up = False
+                        if upright == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'k':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                upright = False
+                        if right == True:
+                            if j+c < 8 and board[i][j+c] == 'k':
+                                print("Check")
+                            if j+c > 7 or board[i][j+c].islower() or board[i][j+c].isupper():
+                                right = False
+                        if downright == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'k':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                downright = False
+                        if down == True:
+                            if i-c > -1 and board[i-c][j] == 'k':
+                                print("Check")
+                            if i-c < 0 or board[i-c][j].islower() or board[i-c][j].isupper():
+                                down = False
+                        if downleft == True:
+                            if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'k':
+                                print("Check")
+                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
+                                downleft = False
+                        if left == True:
+                            if j-c > -1 and board[i][j-c] == 'k':
+                                print("Check")
+                            if j-c < 0 or board[i][j-c].islower() or board[i][j-c].isupper():
+                                left = False
         input()
         return
 
