@@ -32,14 +32,20 @@ class Chess:
     def player1move(self, board, turn, game):
         while True:
             coordinate1 = input("What white piece would you like to move?: ")
-            y_axis = abs((ord(coordinate1[0].upper())-64)-8)
-            x_axis = int(coordinate1[1])-1
-            currentpiece = board[y_axis][x_axis]
+            if coordinate1[0].isalpha() and coordinate1[1].isnumeric() and len(coordinate1) == 2:
+                y_axis = abs((ord(coordinate1[0].upper())-64)-8)
+                x_axis = int(coordinate1[1])-1
+            else:
+                return self.player1move(board, turn, game)
+            if y_axis > 7 or x_axis > 7 or y_axis < 0 or x_axis < 0:
+                print(y_axis, x_axis)
+                return self.player1move(board, turn, game)
 
+            currentpiece = board[y_axis][x_axis]
             if currentpiece.isupper():
                 break
             else:
-                print("Please input a valid move. is white")
+                return self.player1move(board, turn, game)
 
         print(currentpiece)
         cl.movevalidation(board, coordinate1, currentpiece)
@@ -48,15 +54,20 @@ class Chess:
     def player2move(self, board, turn, game):
         while True:
             coordinate1 = input("What black piece would you like to move?: ")
-            y_axis = abs((ord(coordinate1[0].upper())-64)-8)
-            x_axis = int(coordinate1[1])-1
-            currentpiece = board[y_axis][x_axis]
+            if coordinate1[0].isalpha() and coordinate1[1].isnumeric() and len(coordinate1) == 2:
+                y_axis = abs((ord(coordinate1[0].upper())-64)-8)
+                x_axis = int(coordinate1[1])-1
+            else:
+                return self.player2move(board, turn, game)
+            if y_axis > 7 or x_axis > 7 or y_axis < 0 or x_axis < 0:
+                print(y_axis, x_axis)
+                return self.player2move(board, turn, game)
 
+            currentpiece = board[y_axis][x_axis]
             if currentpiece.islower():
                 break
             else:
-                print("Please input a valid move. is black")
-
+                return self.player2move(board, turn, game)
         print(currentpiece)
         cl.movevalidation(board, coordinate1, currentpiece)
         cl.playerturn(turn, board, game)
@@ -70,11 +81,21 @@ class Chess:
 
             y2_axis = self.chess_helper.coordYhelper(coordinate2)
             x2_axis = self.chess_helper.coordXhelper(coordinate2)
+
             origpiece = board[y1_axis][x1_axis]
             nextpiece = board[y2_axis][x2_axis]
             board[y2_axis][x2_axis] = origpiece
             board[y1_axis][x1_axis] = "-"
-            if self.king_incheck.kingcheck(self.boardstate.board) == True:
+
+            if self.king_incheck.kingcheck(self.boardstate.board) == [True, True] and origpiece.isupper():
+                board[y2_axis][x2_axis] = nextpiece
+                board[y1_axis][x1_axis] = origpiece
+                print("Please input a new move. You are still in check.")
+                if board[y1_axis][x1_axis].isupper():
+                    cl.playerturn(True, True, board)
+                else:
+                    cl.playerturn(False, True, board)
+            if self.king_incheck.kingcheck(self.boardstate.board) == [True, False] and origpiece.islower():
                 board[y2_axis][x2_axis] = nextpiece
                 board[y1_axis][x1_axis] = origpiece
                 print("Please input a new move. You are still in check.")
@@ -85,24 +106,33 @@ class Chess:
             board[y2_axis][x2_axis] = nextpiece
             board[y1_axis][x1_axis] = origpiece
             if currentpiece.lower() == "p":
-                self.piece_moves.pawnmove(
-                    y1_axis, x1_axis, y2_axis, x2_axis, board)
+                if (self.piece_moves.pawnmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.islower()):
+                    return self.player2move(board, False, True)
+                elif(self.piece_moves.pawnmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.isupper()):
+                    return self.player1move(board, True, True)
                 break
 
             if currentpiece.lower() == "h":
-                self.piece_moves.knightmove(
-                    y1_axis, x1_axis, y2_axis, x2_axis, board)
+                if (currentpiece.islower() and self.piece_moves.knightmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False):
+                    return self.player2move(board, False, True)
+                    
+                if(currentpiece.isupper() and self.piece_moves.knightmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False):
+                    return self.player1move(board, True, True)
                 break
 
             if currentpiece.lower() == "b":
-                self.piece_moves.bishopmove(
-                    y1_axis, x1_axis, y2_axis, x2_axis, board)
+                if (self.piece_moves.bishopmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.islower()):
+                    return self.player2move(board, False, True)
+                if(self.piece_moves.bishopmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.isupper()):
+                    return self.player1move(board, True, True)
                 break
 
             if currentpiece.lower() == "r":
-                self.piece_moves.rookmove(
-                    y1_axis, x1_axis, y2_axis, x2_axis, board)
-                return
+                if (self.piece_moves.rookmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.islower()):
+                    return self.player2move(board, False, True)
+                if(self.piece_moves.rookmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.isupper()):
+                    return self.player1move(board, True, True)
+                break
 
             if currentpiece.lower() == "k":
                 self.piece_moves.kingmove(
@@ -110,8 +140,10 @@ class Chess:
                 break
 
             if currentpiece.lower() == "q":
-                self.piece_moves.queenmove(
-                    y1_axis, x1_axis, y2_axis, x2_axis, board)
+                if (self.piece_moves.queenmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.islower()):
+                    return self.player2move(board, False, True)
+                if(self.piece_moves.queenmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.isupper()):
+                    return self.player1move(board, True, True)
                 break
 
 
