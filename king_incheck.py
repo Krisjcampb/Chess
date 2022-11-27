@@ -6,51 +6,52 @@ class KingCheckVerify:
         self.boardstate = Board()
     def kingcheck(self, board):
         check = False
-        kingtype = "white"
+        whitecheck = False
+        blackcheck = False
         for i in range(len(board)):
             for j in range(len(board)):
                 if board[i][j].lower() == 'p' and board[i][j].islower():
                     if i+1 < 8 and j-1 > 0:
                         if board[i+1][j-1] == 'K':
-                            check = True
+                            check, whitecheck = True, True
                             print("Check")
                     if i+1 < 8 and j+1 < 8:
                         if board[i+1][j+1] == 'K':
-                            check = True
+                            check, whitecheck = True, True
                             print("Check")
                 if board[i][j].lower() == 'h' and board[i][j].islower():
                     if i+2 < 8 and j+1 < 8:
                         if board[i+2][j+1] == 'K':
-                            check = True
+                            check, whitecheck = True, True
                             print("Check")
                     if i+2 < 8 and j-1 > 0:
                         if board[i+2][j-1] == 'K':
-                            check = True
+                            check, whitecheck = True, True
                             print("Check")
                     if i-2 > 0 and j+1 < 8:
                         if board[i-2][j+1] == 'K':
-                            check = True
+                            check, whitecheck = True, True
                             print("Check")
                     if i-2 > 0 and j-1 < 8:
                         if board[i-2][j-1] == 'K':
-                            check = True
+                            check, whitecheck = True, True
                             print("Check")
                     if i+1 < 8 and j+2 < 8:
                         if board[i+1][j+2] == 'K':
-                            check = True
+                            check, whitecheck = True, True
                             print("Check")
                     if i-1 > 0 and j+2 < 8:
                         if board[i-1][j+2] == 'K':
-                            check = True
+                            check, whitecheck = True, True
                             print("Check")
                     if i+1 < 8 and j-2 > 0:
                         if board[i+1][j-2] == 'K':
-                            check = True
+                            check, whitecheck = True, True
                             print("Check")
                     if i-1 > 0 and j-2 > 0:
                         if board[i-1][j-2] == 'K':
+                            check, whitecheck = True, True
                             print("Check")
-                            return check, True
                 if board[i][j].lower() == 'b' and board[i][j].islower():
                     leftup = True
                     leftdown = True
@@ -59,28 +60,28 @@ class KingCheckVerify:
                     for c in range(1, 7):
                         if leftup == True:
                             if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 leftup = False
 
                         if leftdown == True:
                             if j-c < 0 and i-c < 0 and board[i-c][j-c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j-c > 7 or i-c < 0 or board[i-c][j-c].islower() or board[i-c][j-c].isupper():
                                 leftdown = False
 
                         if rightup == True:
                             if j+c < 8 and i+c < 8 and board[i+c][j+c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j+c > 7 or i+c > 7 or board[i+c][j+c].islower() or board[i+c][j+c].isupper():
                                 rightup = False
 
                         if rightdown == True:
                             if j+c < 8 and i-c > 0 and board[i-c][j+c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j+c > 7 or i-c < 0 and board[i-c][j+c].islower() or board[i-c][j+c].isupper():
                                 rightdown = False
@@ -93,25 +94,25 @@ class KingCheckVerify:
                         if right == True:
                             if board[i][j+c] == 'K' and j+c < 8:
                                 print("Check")
-                                check = True
+                                check, whitecheck = True, True
                             if j+c > 7 or board[i][j+c].islower() or board[i][j+c].isupper():
                                 right = False
                         if left == True:
                             if board[i][j-c] == 'K' and j-c > -1:
                                 print("Check")
-                                check = True
+                                check, whitecheck = True, True
                             if board[i][j-c].islower() or board[i][j-c].isupper():
                                 left = False
                         if up == True:
                             if board[i+c][j] == 'K' and i+c < 8:
                                 print("Check")
-                                check = True
+                                check, whitecheck = True, True
                             if board[i+c][j].islower() or board[i+c][j].isupper():
                                 up = False
                         if down == True:
                             if board[i-c][j] == 'K' and i-c > 0:
                                 print("Check")
-                                check = True
+                                check, whitecheck = True, True
                             if board[i-c][j].islower() or board[i-c][j].isupper():
                                 down = False
                 if board[i][j].lower() == 'q' and board[i][j].islower():
@@ -127,93 +128,93 @@ class KingCheckVerify:
                     for c in range(1, 7):
                         if upleft == True:
                             if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 leftup = False
                         if up == True:
                             if i+c < 8 and board[i+c][j] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if i+c > 7 or board[i+c][j].islower() or board[i+c][j].isupper():
                                 up = False
                         if upright == True:
                             if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 upright = False
                         if right == True:
                             if j+c < 8 and board[i][j+c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j+c > 7 or board[i][j+c].islower() or board[i][j+c].isupper():
                                 right = False
                         if downright == True:
                             if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 downright = False
                         if down == True:
                             if i-c > -1 and board[i-c][j] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if i-c < 0 or board[i-c][j].islower() or board[i-c][j].isupper():
                                 down = False
                         if downleft == True:
                             if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 downleft = False
                         if left == True:
                             if j-c > -1 and board[i][j-c] == 'K':
-                                check = True
+                                check, whitecheck = True, True
                                 print("Check")
                             if j-c < 0 or board[i][j-c].islower() or board[i][j-c].isupper():
                                 left = False
                 if board[i][j].lower() == 'p' and board[i][j].isupper():
                     if i-1 > 0 and j-1 > 0:
                         if board[i-1][j-1] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                     if i-1 > 0 and j+1 < 8:
                         if board[i-1][j+1] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                 if board[i][j].lower() == 'h' and board[i][j].isupper():
                     if i+2 < 8 and j+1 < 8:
                         if board[i+2][j+1] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                     if i+2 < 8 and j-1 > -1:
                         if board[i+2][j-1] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                     if i-2 > -1 and j+1 < 8:
                         if board[i-2][j+1] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                     if i-2 > -1 and j-1 < 8:
                         if board[i-2][j-1] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                     if i+1 < 8 and j+2 < 8:
                         if board[i+1][j+2] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                     if i-1 > -1 and j+2 < 8:
                         if board[i-1][j+2] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                     if i+1 < 8 and j-2 > -1:
                         if board[i+1][j-2] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                     if i-1 > -1 and j-2 > -1:
                         if board[i-1][j-2] == 'k':
-                            check = True
+                            check, blackcheck = True, True
                             print("Check")
                 if board[i][j].lower() == 'b' and board[i][j].isupper():
                     leftup = True
@@ -223,28 +224,28 @@ class KingCheckVerify:
                     for c in range(1, 7):
                         if leftup == True:
                             if j-c > -1 and i+c < 8 and board[i+c][j-c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 leftup = False
 
                         if leftdown == True:
                             if j-c > -1 and i-c > -1 and board[i-c][j-c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j-c < 0 or i-c < 0 or board[i-c][j-c].islower() or board[i-c][j-c].isupper():
                                 leftdown = False
 
                         if rightup == True:
                             if j+c < 8 and i+c < 8 and board[i+c][j+c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j+c > 7 or i+c > 7 or board[i+c][j+c].islower() or board[i+c][j+c].isupper():
                                 rightup = False
 
                         if rightdown == True:
                             if j+c < 8 and i-c > 0 and board[i-c][j+c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j+c > 7 or i-c < 0 and board[i-c][j+c].islower() or board[i-c][j+c].isupper():
                                 rightdown = False
@@ -256,25 +257,25 @@ class KingCheckVerify:
                     for c in range(1, 7):
                         if right == True:
                             if j+c < 8 and board[i][j+c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j+c > 7 or board[i][j+c].islower() or board[i][j+c].isupper():
                                 right = False
                         if left == True:
                             if board[i][j-c] == 'k' and j-c > -1:
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if board[i][j-c].islower() or board[i][j-c].isupper():
                                 left = False
                         if up == True:
                             if i+c < 8 and board[i+c][j] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if i+c > 7 or board[i+c][j].islower() or board[i+c][j].isupper():
                                 up = False
                         if down == True:
                             if board[i-c][j] == 'k' and i-c > 0:
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if i-c < 0 or board[i-c][j].islower() or board[i-c][j].isupper():
                                 down = False
@@ -291,53 +292,53 @@ class KingCheckVerify:
                     for c in range(1, 7):
                         if upleft == True:
                             if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 leftup = False
                         if up == True:
                             if i+c < 8 and board[i+c][j] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if i+c > 7 or board[i+c][j].islower() or board[i+c][j].isupper():
                                 up = False
                         if upright == True:
                             if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 upright = False
                         if right == True:
                             if j+c < 8 and board[i][j+c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j+c > 7 or board[i][j+c].islower() or board[i][j+c].isupper():
                                 right = False
                         if downright == True:
                             if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 downright = False
                         if down == True:
                             if i-c > -1 and board[i-c][j] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if i-c < 0 or board[i-c][j].islower() or board[i-c][j].isupper():
                                 down = False
                         if downleft == True:
                             if j-c > 0 and i+c < 8 and board[i+c][j-c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j-c < 0 or i+c > 7 or board[i+c][j-c].islower() or board[i+c][j-c].isupper():
                                 downleft = False
                         if left == True:
                             if j-c > -1 and board[i][j-c] == 'k':
-                                check = True
+                                check, blackcheck = True, True
                                 print("Check")
                             if j-c < 0 or board[i][j-c].islower() or board[i][j-c].isupper():
                                 left = False
-        return check
+        return check, whitecheck, blackcheck
 
     def kingcheckmate(self, board):
         checkmate = False

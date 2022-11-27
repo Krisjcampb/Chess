@@ -86,8 +86,17 @@ class Chess:
             nextpiece = board[y2_axis][x2_axis]
             board[y2_axis][x2_axis] = origpiece
             board[y1_axis][x1_axis] = "-"
+            
+            if self.king_incheck.kingcheck(self.boardstate.board) == [True, True, True]:
+                board[y2_axis][x2_axis] = nextpiece
+                board[y1_axis][x1_axis] = origpiece
+                print("Please input a new move. You are in check.")
+                if board[y1_axis][x1_axis].isupper():
+                    cl.playerturn(True, True, board)
+                else:
+                    cl.playerturn(False, True, board)
 
-            if self.king_incheck.kingcheck(self.boardstate.board) == [True, True] and origpiece.isupper():
+            if self.king_incheck.kingcheck(self.boardstate.board) == [True, True, False] and origpiece.isupper():
                 board[y2_axis][x2_axis] = nextpiece
                 board[y1_axis][x1_axis] = origpiece
                 print("Please input a new move. You are still in check.")
@@ -95,7 +104,7 @@ class Chess:
                     cl.playerturn(True, True, board)
                 else:
                     cl.playerturn(False, True, board)
-            if self.king_incheck.kingcheck(self.boardstate.board) == [True, False] and origpiece.islower():
+            if self.king_incheck.kingcheck(self.boardstate.board) == [True, False, True] and origpiece.islower():
                 board[y2_axis][x2_axis] = nextpiece
                 board[y1_axis][x1_axis] = origpiece
                 print("Please input a new move. You are still in check.")
