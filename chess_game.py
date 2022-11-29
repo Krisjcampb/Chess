@@ -81,39 +81,33 @@ class Chess:
 
             y2_axis = self.chess_helper.coordYhelper(coordinate2)
             x2_axis = self.chess_helper.coordXhelper(coordinate2)
-
             origpiece = board[y1_axis][x1_axis]
             nextpiece = board[y2_axis][x2_axis]
             board[y2_axis][x2_axis] = origpiece
             board[y1_axis][x1_axis] = "-"
-            
-            if self.king_incheck.kingcheck(self.boardstate.board) == [True, True, True]:
-                board[y2_axis][x2_axis] = nextpiece
-                board[y1_axis][x1_axis] = origpiece
-                print("Please input a new move. You are in check.")
-                if board[y1_axis][x1_axis].isupper():
+            #White Check
+            if origpiece.isupper():
+                if self.king_incheck.kingcheck(self.boardstate.board) == [True, True, False]:
+                    board[y2_axis][x2_axis] = nextpiece
+                    board[y1_axis][x1_axis] = origpiece
                     cl.playerturn(True, True, board)
-                else:
+            #Black Check
+            elif origpiece.islower():
+                if self.king_incheck.kingcheck(self.boardstate.board) == [True, False, True]:
+                    board[y2_axis][x2_axis] = nextpiece
+                    board[y1_axis][x1_axis] = origpiece
                     cl.playerturn(False, True, board)
-
-            if self.king_incheck.kingcheck(self.boardstate.board) == [True, True, False] and origpiece.isupper():
+            #Both in Check
+            elif self.king_incheck.kingcheck(self.boardstate.board) == [True, True, True]:
                 board[y2_axis][x2_axis] = nextpiece
                 board[y1_axis][x1_axis] = origpiece
-                print("Please input a new move. You are still in check.")
-                if board[y1_axis][x1_axis].isupper():
-                    cl.playerturn(True, True, board)
-                else:
-                    cl.playerturn(False, True, board)
-            if self.king_incheck.kingcheck(self.boardstate.board) == [True, False, True] and origpiece.islower():
-                board[y2_axis][x2_axis] = nextpiece
-                board[y1_axis][x1_axis] = origpiece
-                print("Please input a new move. You are still in check.")
                 if board[y1_axis][x1_axis].isupper():
                     cl.playerturn(True, True, board)
                 else:
                     cl.playerturn(False, True, board)
             board[y2_axis][x2_axis] = nextpiece
             board[y1_axis][x1_axis] = origpiece
+
             if currentpiece.lower() == "p":
                 if (self.piece_moves.pawnmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.islower()):
                     return self.player2move(board, False, True)
