@@ -87,18 +87,21 @@ class Chess:
             board[y1_axis][x1_axis] = "-"
             #White Check
             if origpiece.isupper():
-                if self.king_incheck.kingcheck(self.boardstate.board) == [True, True, False]:
+                if self.king_incheck.kingcheck(self.boardstate.board, False) == [True, True, False]:
                     board[y2_axis][x2_axis] = nextpiece
                     board[y1_axis][x1_axis] = origpiece
+                    self.boardstate.printboard(board)
                     cl.playerturn(True, True, board)
             #Black Check
             elif origpiece.islower():
-                if self.king_incheck.kingcheck(self.boardstate.board) == [True, False, True]:
+                if self.king_incheck.kingcheck(self.boardstate.board, False) == [True, False, True]:
                     board[y2_axis][x2_axis] = nextpiece
                     board[y1_axis][x1_axis] = origpiece
+                    self.boardstate.printboard(board)
                     cl.playerturn(False, True, board)
             #Both in Check
-            elif self.king_incheck.kingcheck(self.boardstate.board) == [True, True, True]:
+            elif self.king_incheck.kingcheck(self.boardstate.board, False) == [True, True, True]:
+                input("hello")
                 board[y2_axis][x2_axis] = nextpiece
                 board[y1_axis][x1_axis] = origpiece
                 if board[y1_axis][x1_axis].isupper():
@@ -138,8 +141,10 @@ class Chess:
                 break
 
             if currentpiece.lower() == "k":
-                self.piece_moves.kingmove(
-                    y1_axis, x1_axis, y2_axis, x2_axis, board)
+                if (self.piece_moves.kingmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.islower()):
+                    return self.player2move(board, False, True)
+                if (self.piece_moves.kingmove(y1_axis, x1_axis, y2_axis, x2_axis, board) == False and currentpiece.isupper()):
+                    return self.player1move(board, True, True)
                 break
 
             if currentpiece.lower() == "q":

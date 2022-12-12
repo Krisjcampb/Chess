@@ -4,7 +4,7 @@ class KingCheckVerify:
 
     def __init__(self):
         self.boardstate = Board()
-    def kingcheck(self, board):
+    def kingcheck(self, board, kingstate):
         check = False
         whitecheck = False
         blackcheck = False
@@ -286,233 +286,243 @@ class KingCheckVerify:
                                 check, blackcheck = True, True                                
                             if j-c < 0 or board[i][j-c].islower() or board[i][j-c].isupper():
                                 left = False
-        if (check == True):
+        if (check == True and kingstate == False):
+            print(self.kingcheckmate(self.boardstate.checkboard))
             input("Check")
+            
         return [check, whitecheck, blackcheck]
 
-    def kingcheckmate(self, board):
+    def kingcheckmate(self, checkboard):
         checkmate = False
-        for i in range(len(board)):
-            for j in range(len(board)):
-                if board[i][j].lower() == 'p' and board[i][j].isupper():
-                    if i-1 < 0 or board[i-1][j] == "-":
-                        self.boardstate.checkboard[i-1][j] = 'p'
-                        self.boardstate.printboard(self.boardstate.checkboard)
-                        if self.kingcheck(self.boardstate.checkboard) == False:
-                            print("Checking!")
-                        self.boardstate.checkboard[i-1][j] = board[i-1][j]
-                    if j-1 > 0 and i-1 > 0 and board[i-1][j-1].isupper():
-                        self.boardstate.checkboard[i-1][j-1] = 'p'
-                        self.boardstate.printboard(self.boardstate.checkboard)
-                        if self.kingcheck(self.boardstate.checkboard) == False:
-                            print("Checking!")
-                        self.boardstate.checkboard[i-1][j-1] = board[i-1][j-1]
-                    if j+1 < 7 and i-1 > 0 and board[i-1][j+1].isupper():
-                        self.boardstate.checkboard[i-1][j+1] = 'p'
-                        self.boardstate.printboard(self.boardstate.checkboard)
-                        if self.kingcheck(self.boardstate.checkboard) == False:
-                            print("Checking!")
-                        self.boardstate.checkboard[i-1][j+1] = board[i-1][j+1]
-                if board[i][j].lower() == 'h' and board[i][j].isupper():
+        board = self.boardstate.board
+
+        for i in range(len(checkboard)):
+            for j in range(len(checkboard)):
+                checkboard[i][j] = board[i][j]
+                
+        for i in range(len(checkboard)):
+            for j in range(len(checkboard)):
+                if checkboard[i][j].lower() == 'p' and checkboard[i][j].islower():
+                    if i-1 < 0 or checkboard[i-1][j] == "-":
+                        checkboard[i-1][j] = 'p'
+                        
+                        if self.kingcheck(checkboard, True) == False:
+                            checkmate = True
+                        checkboard[i-1][j] = self.boardstate.board[i-1][j]
+                    if j-1 > 0 and i-1 > 0 and checkboard[i-1][j-1].isupper():
+                        checkboard[i-1][j-1] = 'p'
+                        
+                        if self.kingcheck(checkboard, True) == False:
+                            checkmate = True
+                        checkboard[i-1][j-1] = self.boardstate.board[i-1][j-1]
+                    if j+1 < 7 and i-1 > 0 and checkboard[i-1][j+1].isupper():
+                        checkboard[i-1][j+1] = 'p'
+                        
+                        if self.kingcheck(checkboard, True) == False:
+                            checkmate = True
+                        checkboard[i-1][j+1] = self.boardstate.board[i-1][j+1]
+                if checkboard[i][j].lower() == 'h' and checkboard[i][j].islower():
                     if i+2 < 8 and j+1 < 8:
-                        if not board[i+2][j+1].islower():
-                            self.boardstate.checkboard[i+2][j+1] = 'h'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i+2][j+1] = board[i+2][j+1]
-                    if i+2 < 8 and j-1 > 0:
-                        if not board[i+2][j-1].islower():
-                            self.boardstate.checkboard[i+2][j-1] = 'h'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i+2][j-1] = board[i+2][j-1]
+                        if not checkboard[i+2][j+1].islower():
+                            checkboard[i][j] = '-'
+                            checkboard[i+2][j+1] = 'h'
+                            
+                            # if self.kingcheck(checkboard, True) == False:
+                            #     checkmate = True
+                        checkboard[i][j] = 'h'
+                        checkboard[i+2][j+1] = board[i+2][j+1]
+                    if i+2 < 8 and j-1 >= 0:
+                        if not checkboard[i+2][j-1].islower():
+                            checkboard[i+2][j-1] = 'h'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i+2][j-1] = self.boardstate.board[i+2][j-1]
                     if i-2 > 0 and j+1 < 8:
-                        if not board[i-2][j+1].islower():
-                            self.boardstate.checkboard[i-2][j+1] = 'h'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i-2][j+1] = board[i-2][j+1]
+                        if not checkboard[i-2][j+1].islower():
+                            checkboard[i-2][j+1] = 'h'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i-2][j+1] = self.boardstate.board[i-2][j+1]
                     if i-2 > 0 and j-1 < 8:
-                        if not board[i-2][j-1].islower():
-                            self.boardstate.checkboard[i-2][j-1] = 'h'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i-2][j-1] = board[i-2][j-1]
+                        if not checkboard[i-2][j-1].islower():
+                            checkboard[i-2][j-1] = 'h'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i-2][j-1] = self.boardstate.board[i-2][j-1]
                     if i+1 < 8 and j+2 < 8:
-                        if not board[i+1][j+2].islower():
-                            self.boardstate.checkboard[i+1][j+2] = 'h'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i+1][j+2] = board[i+1][j+2]
+                        if not checkboard[i+1][j+2].islower():
+                            checkboard[i+1][j+2] = 'h'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i+1][j+2] = self.boardstate.board[i+1][j+2]
                     if i-1 > 0 and j+2 < 8:
-                        if not board[i-1][j+2].islower():
-                            self.boardstate.checkboard[i-1][j+2] = 'h'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i-1][j+2] = board[i-1][j+2]
+                        if not checkboard[i-1][j+2].islower():
+                            checkboard[i-1][j+2] = 'h'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i-1][j+2] = self.boardstate.board[i-1][j+2]
                     if i+1 < 8 and j-2 > 0:
-                        if not board[i+1][j-2].islower():
-                            self.boardstate.checkboard[i+1][j-2] = 'h'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i+1][j-2] = board[i+1][j-2]
+                        if not checkboard[i+1][j-2].islower():
+                            checkboard[i+1][j-2] = 'h'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i+1][j-2] = self.boardstate.board[i+1][j-2]
                     if i-1 > 0 and j-2 > 0:
-                        if not board[i-1][j-2].islower():
-                            self.boardstate.checkboard[i-1][j-2] = 'h'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i-1][j-2] = board[i-1][j-2]
-                if board[i][j].lower() == 'b' and board[i][j].islower():
+                        if not checkboard[i-1][j-2].islower():
+                            checkboard[i-1][j-2] = 'h'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i-1][j-2] = self.boardstate.board[i-1][j-2]
+                if checkboard[i][j].lower() == 'b' and checkboard[i][j].islower():
                     leftup = True
                     leftdown = True
                     rightup = True
                     rightdown = True
                     for c in range(1, 7):
                         if leftup == True:
-                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower():
+                            if j-c < 0 or i+c > 7 or checkboard[i+c][j-c].islower():
                                 leftup = False
-                            elif board[i+c][j-c].isupper():
+                            elif checkboard[i+c][j-c].isupper():
                                 leftup = False
-                                self.boardstate.checkboard[i+c][j-c] = 'b'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j-c] = board[i+c][j-c]
+                                checkboard[i+c][j-c] = 'b'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j-c] = self.boardstate.board[i+c][j-c]
                             else:
-                                self.boardstate.checkboard[i+c][j-c] = 'b'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j-c] = board[i+c][j-c]
+                                checkboard[i+c][j-c] = 'b'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j-c] = self.boardstate.board[i+c][j-c]
 
                         if leftdown == True:
-                            if j-c < 0 or i-c < 0 or board[i-c][j-c].islower():
+                            if j-c < 0 or i-c < 0 or checkboard[i-c][j-c].islower():
                                 leftdown = False
-                            elif board[i-c][j-c].isupper():
+                            elif checkboard[i-c][j-c].isupper():
                                 leftdown = False
-                                self.boardstate.checkboard[i-c][j-c] = 'b'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j-c] = board[i-c][j-c]
+                                checkboard[i-c][j-c] = 'b'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j-c] = self.boardstate.board[i-c][j-c]
                             else:
-                                self.boardstate.checkboard[i-c][j-c] = 'b'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j-c] = board[i-c][j-c]
+                                checkboard[i-c][j-c] = 'b'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j-c] = self.boardstate.board[i-c][j-c]
 
                         if rightup == True:
-                            if j+c > 7 or i+c > 7 or board[i+c][j+c].islower():
+                            if j+c > 7 or i+c > 7 or checkboard[i+c][j+c].islower():
                                 rightup = False
-                            elif board[i+c][j+c].isupper():
+                            elif checkboard[i+c][j+c].isupper():
                                 rightup = False
-                                self.boardstate.checkboard[i+c][j+c] = 'b'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j+c] = board[i+c][j+c]
+                                checkboard[i+c][j+c] = 'b'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j+c] = self.boardstate.board[i+c][j+c]
                             else:
-                                self.boardstate.checkboard[i+c][j+c] = 'b'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j+c] = board[i+c][j+c]
+                                checkboard[i+c][j+c] = 'b'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j+c] = self.boardstate.board[i+c][j+c]
 
                         if rightdown == True:
-                            if j+c > 7 or i-c < 0 or board[i-c][j+c].islower():
+                            if j+c > 7 or i-c < 0 or checkboard[i-c][j+c].islower():
                                 rightdown = False
-                            elif board[i-c][j+c].isupper():
+                            elif checkboard[i-c][j+c].isupper():
                                 rightdown = False
-                                self.boardstate.checkboard[i-c][j+c] = 'b'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j+c] = board[i-c][j+c]
+                                checkboard[i-c][j+c] = 'b'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j+c] = self.boardstate.board[i-c][j+c]
                             else:
-                                self.boardstate.checkboard[i-c][j+c] = 'b'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j+c] = board[i-c][j+c]
-                if board[i][j].lower() == 'r' and board[i][j].islower():
+                                checkboard[i-c][j+c] = 'b'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j+c] = self.boardstate.board[i-c][j+c]
+                if checkboard[i][j].lower() == 'r' and checkboard[i][j].islower():
                     up = True
                     left = True
                     right = True
                     down = True
                     for c in range(1, 7):
                         if right == True:
-                            if j+c > 7 or board[i][j+c].islower():
+                            if j+c > 7 or checkboard[i][j+c].islower():
                                 right = False
-                            elif board[i][j+c].isupper():
+                            elif checkboard[i][j+c].isupper():
                                 right = False
-                                self.boardstate.checkboard[i][j+c] = 'r'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j+c] = board[i][j+c]
+                                checkboard[i][j+c] = 'r'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j+c] = self.boardstate.board[i][j+c]
                             else:
-                                self.boardstate.checkboard[i][j+c] = 'r'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j+c] = board[i][j+c]
+                                checkboard[i][j+c] = 'r'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j+c] = self.boardstate.board[i][j+c]
                         if left == True:
-                            if j-c < 0 or board[i][j-c].islower():
+                            if j-c < 0 or checkboard[i][j-c].islower():
                                 left = False
-                            elif board[i][j-c].isupper():
+                            elif checkboard[i][j-c].isupper():
                                 left = False
-                                self.boardstate.checkboard[i][j-c] = 'r'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j-c] = board[i][j-c]
+                                checkboard[i][j-c] = 'r'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j-c] = self.boardstate.board[i][j-c]
                             else:
-                                self.boardstate.checkboard[i][j-c] = 'r'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j-c] = board[i][j-c]
+                                checkboard[i][j-c] = 'r'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j-c] = self.boardstate.board[i][j-c]
                         if up == True:
-                            if i+c > 7 or board[i+c][j].islower():
+                            if i+c > 7 or checkboard[i+c][j].islower():
                                 up = False
-                            elif board[i+c][j].isupper():
+                            elif checkboard[i+c][j].isupper():
                                 up = False
-                                self.boardstate.checkboard[i+c][j] = 'r'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j] = board[i+c][j]
+                                checkboard[i+c][j] = 'r'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j] = self.boardstate.board[i+c][j]
                             else:
-                                self.boardstate.checkboard[i+c][j] = 'r'
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j] = board[i+c][j]
+                                checkboard[i+c][j] = 'r'
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j] = self.boardstate.board[i+c][j]
                         if down == True:
-                            if i-c < 0 or board[i-c][j].islower():
+                            if i-c < 0 or checkboard[i-c][j].islower():
                                 down = False
-                            elif board[i-c][j].isupper():
+                            elif checkboard[i-c][j].isupper():
                                 down = False
-                                self.boardstate.checkboard[i-c][j] = 'r'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j] = board[i-c][j]
+                                checkboard[i-c][j] = 'r'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j] = self.boardstate.board[i-c][j]
                             else:
-                                self.boardstate.checkboard[i-c][j] = 'r'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j] = board[i-c][j]
-                if board[i][j].lower() == 'q' and board[i][j].islower():
+                                checkboard[i-c][j] = 'r'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j] = self.boardstate.board[i-c][j]
+                if checkboard[i][j].lower() == 'q' and checkboard[i][j].islower():
                     leftup = True
                     up = True
                     rightup = True
@@ -524,355 +534,355 @@ class KingCheckVerify:
 
                     for c in range(1, 7):
                         if right == True:
-                            if j+c > 7 or board[i][j+c].islower():
+                            if j+c > 7 or checkboard[i][j+c].islower():
                                 right = False
-                            elif board[i][j+c].isupper():
+                            elif checkboard[i][j+c].isupper():
                                 right = False
-                                self.boardstate.checkboard[i][j+c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j+c] = board[i][j+c]
+                                checkboard[i][j+c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j+c] = self.boardstate.board[i][j+c]
                             else:
-                                self.boardstate.checkboard[i][j+c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j+c] = board[i][j+c]
+                                checkboard[i][j+c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j+c] = self.boardstate.board[i][j+c]
                         if left == True:
-                            if j-c < 0 or board[i][j-c].islower():
+                            if j-c < 0 or checkboard[i][j-c].islower():
                                 left = False
-                            elif board[i][j-c].isupper():
+                            elif checkboard[i][j-c].isupper():
                                 left = False
-                                self.boardstate.checkboard[i][j-c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j-c] = board[i][j-c]
+                                checkboard[i][j-c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j-c] = self.boardstate.board[i][j-c]
                             else:
-                                self.boardstate.checkboard[i][j-c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j-c] = board[i][j-c]
+                                checkboard[i][j-c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j-c] = self.boardstate.board[i][j-c]
                         if up == True:
-                            if i+c > 7 or board[i+c][j].islower():
+                            if i+c > 7 or checkboard[i+c][j].islower():
                                 up = False
-                            elif board[i+c][j].isupper():
+                            elif checkboard[i+c][j].isupper():
                                 up = False
-                                self.boardstate.checkboard[i+c][j] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j] = board[i+c][j]
+                                checkboard[i+c][j] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j] = self.boardstate.board[i+c][j]
                             else:
-                                self.boardstate.checkboard[i+c][j] = 'q'
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j] = board[i+c][j]
+                                checkboard[i+c][j] = 'q'
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j] = self.boardstate.board[i+c][j]
                         if down == True:
-                            if i-c < 0 or board[i-c][j].islower():
+                            if i-c < 0 or checkboard[i-c][j].islower():
                                 down = False
-                            elif board[i-c][j].isupper():
+                            elif checkboard[i-c][j].isupper():
                                 down = False
-                                self.boardstate.checkboard[i-c][j] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j] = board[i-c][j]
+                                checkboard[i-c][j] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j] = self.boardstate.board[i-c][j]
                             else:
-                                self.boardstate.checkboard[i-c][j] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j] = board[i-c][j]
+                                checkboard[i-c][j] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j] = self.boardstate.board[i-c][j]
                         if leftup == True:
-                            if j-c < 0 or i+c > 7 or board[i+c][j-c].islower():
+                            if j-c < 0 or i+c > 7 or checkboard[i+c][j-c].islower():
                                 leftup = False
-                            elif board[i+c][j-c].isupper():
+                            elif checkboard[i+c][j-c].isupper():
                                 leftup = False
-                                self.boardstate.checkboard[i+c][j-c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j-c] = board[i+c][j-c]
+                                checkboard[i+c][j-c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j-c] = self.boardstate.board[i+c][j-c]
                             else:
-                                self.boardstate.checkboard[i+c][j-c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j-c] = board[i+c][j-c]
+                                checkboard[i+c][j-c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j-c] = self.boardstate.board[i+c][j-c]
 
                         if leftdown == True:
-                            if j-c < 0 or i-c < 0 or board[i-c][j-c].islower():
+                            if j-c < 0 or i-c < 0 or checkboard[i-c][j-c].islower():
                                 leftdown = False
-                            elif board[i-c][j-c].isupper():
+                            elif checkboard[i-c][j-c].isupper():
                                 leftdown = False
-                                self.boardstate.checkboard[i-c][j-c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j-c] = board[i-c][j-c]
+                                checkboard[i-c][j-c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j-c] = self.boardstate.board[i-c][j-c]
                             else:
-                                self.boardstate.checkboard[i-c][j-c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j-c] = board[i-c][j-c]
+                                checkboard[i-c][j-c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j-c] = self.boardstate.board[i-c][j-c]
 
                         if rightup == True:
-                            if j+c > 7 or i+c > 7 or board[i+c][j+c].islower():
+                            if j+c > 7 or i+c > 7 or checkboard[i+c][j+c].islower():
                                 rightup = False
-                            elif board[i+c][j+c].isupper():
+                            elif checkboard[i+c][j+c].isupper():
                                 rightup = False
-                                self.boardstate.checkboard[i+c][j+c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j+c] = board[i+c][j+c]
+                                checkboard[i+c][j+c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j+c] = self.boardstate.board[i+c][j+c]
                             else:
-                                self.boardstate.checkboard[i+c][j+c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j+c] = board[i+c][j+c]
+                                checkboard[i+c][j+c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j+c] = self.boardstate.board[i+c][j+c]
 
                         if rightdown == True:
-                            if j+c > 7 or i-c < 0 or board[i-c][j+c].islower():
+                            if j+c > 7 or i-c < 0 or checkboard[i-c][j+c].islower():
                                 rightdown = False
-                            elif board[i-c][j+c].isupper():
+                            elif checkboard[i-c][j+c].isupper():
                                 rightdown = False
-                                self.boardstate.checkboard[i-c][j+c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j+c] = board[i-c][j+c]
+                                checkboard[i-c][j+c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j+c] = self.boardstate.board[i-c][j+c]
                             else:
-                                self.boardstate.checkboard[i-c][j+c] = 'q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j+c] = board[i-c][j+c]
+                                checkboard[i-c][j+c] = 'q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j+c] = self.boardstate.board[i-c][j+c]
                 ##############################################################################################################
-                if board[i][j].lower() == 'p' and board[i][j].isupper():
-                    if i-1 < 0 or board[i-1][j] == "-":
-                        self.boardstate.checkboard[i-1][j] = 'P'
-                        self.boardstate.printboard(self.boardstate.checkboard)
-                        if self.kingcheck(self.boardstate.checkboard) == False:
-                            print("Checking!")
-                        self.boardstate.checkboard[i-1][j] = board[i-1][j]
-                    if j-1 > 0 and i-1 > 0 and board[i-1][j-1].islower():
-                        self.boardstate.checkboard[i-1][j-1] = 'P'
-                        self.boardstate.printboard(self.boardstate.checkboard)
-                        if self.kingcheck(self.boardstate.checkboard) == False:
-                            print("Checking!")
-                        self.boardstate.checkboard[i-1][j-1] = board[i-1][j-1]
-                    if j+1 < 7 and i-1 > 0 and board[i-1][j+1].islower():
-                        self.boardstate.checkboard[i-1][j+1] = 'P'
-                        self.boardstate.printboard(self.boardstate.checkboard)
-                        if self.kingcheck(self.boardstate.checkboard) == False:
-                            print("Checking!")
-                        self.boardstate.checkboard[i-1][j+1] = board[i-1][j+1]
-                if board[i][j].lower() == 'h' and board[i][j].isupper():
+                if checkboard[i][j].lower() == 'p' and checkboard[i][j].isupper():
+                    if i-1 < 0 or checkboard[i-1][j] == "-":
+                        checkboard[i-1][j] = 'P'
+                        
+                        if self.kingcheck(checkboard, True) == False:
+                            checkmate = True
+                        checkboard[i-1][j] = self.boardstate.board[i-1][j]
+                    if j-1 > 0 and i-1 > 0 and checkboard[i-1][j-1].islower():
+                        checkboard[i-1][j-1] = 'P'
+                        
+                        if self.kingcheck(checkboard, True) == False:
+                            checkmate = True
+                        checkboard[i-1][j-1] = self.boardstate.board[i-1][j-1]
+                    if j+1 < 7 and i-1 > 0 and checkboard[i-1][j+1].islower():
+                        checkboard[i-1][j+1] = 'P'
+                        
+                        if self.kingcheck(checkboard, True) == False:
+                            checkmate = True
+                        checkboard[i-1][j+1] = self.boardstate.board[i-1][j+1]
+                if checkboard[i][j].lower() == 'h' and checkboard[i][j].isupper():
                     if i+2 < 8 and j+1 < 8:
-                        if not board[i+2][j+1].isupper():
-                            self.boardstate.checkboard[i+2][j+1] = 'H'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i+2][j+1] = board[i+2][j+1]
+                        if not checkboard[i+2][j+1].isupper():
+                            checkboard[i+2][j+1] = 'H'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i+2][j+1] = self.boardstate.board[i+2][j+1]
                     if i+2 < 8 and j-1 > 0:
-                        if not board[i+2][j-1].isupper():
-                            self.boardstate.checkboard[i+2][j-1] = 'H'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i+2][j-1] = board[i+2][j-1]
+                        if not checkboard[i+2][j-1].isupper():
+                            checkboard[i+2][j-1] = 'H'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i+2][j-1] = self.boardstate.board[i+2][j-1]
                     if i-2 > 0 and j+1 < 8:
-                        if not board[i-2][j+1].isupper():
-                            self.boardstate.checkboard[i-2][j+1] = 'H'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i-2][j+1] = board[i-2][j+1]
+                        if not checkboard[i-2][j+1].isupper():
+                            checkboard[i-2][j+1] = 'H'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i-2][j+1] = self.boardstate.board[i-2][j+1]
                     if i-2 > 0 and j-1 < 8:
-                        if not board[i-2][j-1].isupper():
-                            self.boardstate.checkboard[i-2][j-1] = 'H'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i-2][j-1] = board[i-2][j-1]
+                        if not checkboard[i-2][j-1].isupper():
+                            checkboard[i-2][j-1] = 'H'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i-2][j-1] = self.boardstate.board[i-2][j-1]
                     if i+1 < 8 and j+2 < 8:
-                        if not board[i+1][j+2].isupper():
-                            self.boardstate.checkboard[i+1][j+2] = 'H'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i+1][j+2] = board[i+1][j+2]
+                        if not checkboard[i+1][j+2].isupper():
+                            checkboard[i+1][j+2] = 'H'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i+1][j+2] = self.boardstate.board[i+1][j+2]
                     if i-1 > 0 and j+2 < 8:
-                        if not board[i-1][j+2].isupper():
-                            self.boardstate.checkboard[i-1][j+2] = 'H'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i-1][j+2] = board[i-1][j+2]
+                        if not checkboard[i-1][j+2].isupper():
+                            checkboard[i-1][j+2] = 'H'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i-1][j+2] = self.boardstate.board[i-1][j+2]
                     if i+1 < 8 and j-2 > 0:
-                        if not board[i+1][j-2].isupper():
-                            self.boardstate.checkboard[i+1][j-2] = 'H'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i+1][j-2] = board[i+1][j-2]
+                        if not checkboard[i+1][j-2].isupper():
+                            checkboard[i+1][j-2] = 'H'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i+1][j-2] = self.boardstate.board[i+1][j-2]
                     if i-1 > 0 and j-2 > 0:
-                        if not board[i-1][j-2].isupper():
-                            self.boardstate.checkboard[i-1][j-2] = 'H'
-                            self.boardstate.printboard(self.boardstate.checkboard)
-                            if self.kingcheck(self.boardstate.checkboard) == False:
-                                print("Checking!")
-                        self.boardstate.checkboard[i-1][j-2] = board[i-1][j-2]
-                if board[i][j].lower() == 'b' and board[i][j].isupper():
+                        if not checkboard[i-1][j-2].isupper():
+                            checkboard[i-1][j-2] = 'H'
+                            
+                            if self.kingcheck(checkboard, True) == False:
+                                checkmate = True
+                        checkboard[i-1][j-2] = self.boardstate.board[i-1][j-2]
+                if checkboard[i][j].lower() == 'b' and checkboard[i][j].isupper():
                     leftup = True
                     leftdown = True
                     rightup = True
                     rightdown = True
                     for c in range(1, 7):
                         if leftup == True:
-                            if j-c < 0 or i+c > 7 or board[i+c][j-c].isupper():
+                            if j-c < 0 or i+c > 7 or checkboard[i+c][j-c].isupper():
                                 leftup = False
-                            elif board[i+c][j-c].islower():
+                            elif checkboard[i+c][j-c].islower():
                                 leftup = False
-                                self.boardstate.checkboard[i+c][j-c] = 'B'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j-c] = '-'
+                                checkboard[i+c][j-c] = 'B'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j-c] = '-'
                             else:
-                                self.boardstate.checkboard[i+c][j-c] = 'B'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j-c] = '-'
+                                checkboard[i+c][j-c] = 'B'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j-c] = '-'
 
                         if leftdown == True:
-                            if j-c < 0 or i-c < 0 or board[i-c][j-c].isupper():
+                            if j-c < 0 or i-c < 0 or checkboard[i-c][j-c].isupper():
                                 leftdown = False
-                            elif board[i-c][j-c].islower():
+                            elif checkboard[i-c][j-c].islower():
                                 leftdown = False
-                                self.boardstate.checkboard[i-c][j-c] = 'B'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j-c] = '-'
+                                checkboard[i-c][j-c] = 'B'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j-c] = '-'
                             else:
-                                self.boardstate.checkboard[i-c][j-c] = 'B'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j-c] = '-'
+                                checkboard[i-c][j-c] = 'B'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j-c] = '-'
 
                         if rightup == True:
-                            if j+c > 7 or i+c > 7 or board[i+c][j+c].isupper():
+                            if j+c > 7 or i+c > 7 or checkboard[i+c][j+c].isupper():
                                 rightup = False
-                            elif board[i+c][j+c].islower():
+                            elif checkboard[i+c][j+c].islower():
                                 rightup = False
-                                self.boardstate.checkboard[i+c][j+c] = 'B'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j+c] = '-'
+                                checkboard[i+c][j+c] = 'B'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j+c] = '-'
                             else:
-                                self.boardstate.checkboard[i+c][j+c] = 'B'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j+c] = '-'
+                                checkboard[i+c][j+c] = 'B'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j+c] = '-'
 
                         if rightdown == True:
-                            if j+c > 7 or i-c < 0 or board[i-c][j+c].isupper():
+                            if j+c > 7 or i-c < 0 or checkboard[i-c][j+c].isupper():
                                 rightdown = False
-                            elif board[i-c][j+c].islower():
+                            elif checkboard[i-c][j+c].islower():
                                 rightdown = False
-                                self.boardstate.checkboard[i-c][j+c] = 'B'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j+c] = '-'
+                                checkboard[i-c][j+c] = 'B'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j+c] = '-'
                             else:
-                                self.boardstate.checkboard[i-c][j+c] = 'B'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j+c] = '-'
-                if board[i][j].lower() == 'r' and board[i][j].isupper():
+                                checkboard[i-c][j+c] = 'B'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j+c] = '-'
+                if checkboard[i][j].lower() == 'r' and checkboard[i][j].isupper():
                     up = True
                     left = True
                     right = True
                     down = True
                     for c in range(1, 7):
                         if right == True:
-                            if j+c > 7 or board[i][j+c].isupper():
+                            if j+c > 7 or checkboard[i][j+c].isupper():
                                 right = False
-                            elif board[i][j+c].islower():
+                            elif checkboard[i][j+c].islower():
                                 right = False
-                                self.boardstate.checkboard[i][j+c] = 'R'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j+c] = '-'
+                                checkboard[i][j+c] = 'R'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j+c] = '-'
                             else:
-                                self.boardstate.checkboard[i][j+c] = 'R'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j+c] = '-'
+                                checkboard[i][j+c] = 'R'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j+c] = '-'
                         if left == True:
-                            if j-c < 0 or board[i][j-c].isupper():
+                            if j-c < 0 or checkboard[i][j-c].isupper():
                                 left = False
-                            elif board[i][j-c].islower():
+                            elif checkboard[i][j-c].islower():
                                 left = False
-                                self.boardstate.checkboard[i][j-c] = 'R'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j-c] = '-'
+                                checkboard[i][j-c] = 'R'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j-c] = '-'
                             else:
-                                self.boardstate.checkboard[i][j-c] = 'R'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j-c] = '-'
+                                checkboard[i][j-c] = 'R'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j-c] = '-'
                         if up == True:
-                            if i+c > 7 or board[i+c][j].isupper():
+                            if i+c > 7 or checkboard[i+c][j].isupper():
                                 up = False
-                            elif board[i+c][j].islower():
+                            elif checkboard[i+c][j].islower():
                                 up = False
-                                self.boardstate.checkboard[i+c][j] = 'R'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j] = '-'
+                                checkboard[i+c][j] = 'R'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j] = '-'
                             else:
-                                self.boardstate.checkboard[i+c][j] = 'R'
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j] = '-'
+                                checkboard[i+c][j] = 'R'
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j] = '-'
                         if down == True:
-                            if i-c < 0 or board[i-c][j].isupper():
+                            if i-c < 0 or checkboard[i-c][j].isupper():
                                 down = False
-                            elif board[i-c][j].islower():
+                            elif checkboard[i-c][j].islower():
                                 down = False
-                                self.boardstate.checkboard[i-c][j] = 'R'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j] = '-'
+                                checkboard[i-c][j] = 'R'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j] = '-'
                             else:
-                                self.boardstate.checkboard[i-c][j] = 'R'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j] = '-'
-                if board[i][j].lower() == 'q' and board[i][j].isupper():
+                                checkboard[i-c][j] = 'R'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j] = '-'
+                if checkboard[i][j].lower() == 'q' and checkboard[i][j].isupper():
                     leftup = True
                     up = True
                     rightup = True
@@ -884,133 +894,135 @@ class KingCheckVerify:
 
                     for c in range(1, 7):
                         if right == True:
-                            if j+c > 7 or board[i][j+c].isupper():
+                            if j+c > 7 or checkboard[i][j+c].isupper():
                                 right = False
-                            elif board[i][j+c].islower():
+                            elif checkboard[i][j+c].islower():
                                 right = False
-                                self.boardstate.checkboard[i][j+c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j+c] = board[i][j+c]
+                                checkboard[i][j+c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j+c] = self.boardstate.board[i][j+c]
                             else:
-                                self.boardstate.checkboard[i][j+c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j+c] = board[i][j+c]
+                                checkboard[i][j+c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j+c] = self.boardstate.board[i][j+c]
                         if left == True:
-                            if j-c < 0 or board[i][j-c].isupper():
+                            if j-c < 0 or checkboard[i][j-c].isupper():
                                 left = False
-                            elif board[i][j-c].islower():
+                            elif checkboard[i][j-c].islower():
                                 left = False
-                                self.boardstate.checkboard[i][j-c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j-c] = board[i][j-c]
+                                checkboard[i][j-c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j-c] = self.boardstate.board[i][j-c]
                             else:
-                                self.boardstate.checkboard[i][j-c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i][j-c] = board[i][j-c]
+                                checkboard[i][j-c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i][j-c] = self.boardstate.board[i][j-c]
                         if up == True:
-                            if i+c > 7 or board[i+c][j].isupper():
+                            if i+c > 7 or checkboard[i+c][j].isupper():
                                 up = False
-                            elif board[i+c][j].islower():
+                            elif checkboard[i+c][j].islower():
                                 up = False
-                                self.boardstate.checkboard[i+c][j] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j] = board[i+c][j]
+                                checkboard[i+c][j] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j] = self.boardstate.board[i+c][j]
                             else:
-                                self.boardstate.checkboard[i+c][j] = 'Q'
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j] = board[i+c][j]
+                                checkboard[i+c][j] = 'Q'
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j] = self.boardstate.board[i+c][j]
                         if down == True:
-                            if i-c < 0 or board[i-c][j].isupper():
+                            if i-c < 0 or checkboard[i-c][j].isupper():
                                 down = False
-                            elif board[i-c][j].islower():
+                            elif checkboard[i-c][j].islower() and checkboard[i-c][j] != 'k':
                                 down = False
-                                self.boardstate.checkboard[i-c][j] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j] = board[i-c][j]
+                                checkboard[i-c][j] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True)[0] == False:
+                                    checkmate = True
+                                checkboard[i-c][j] = self.boardstate.board[i-c][j]
                             else:
-                                self.boardstate.checkboard[i-c][j] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j] = board[i-c][j]
+                                checkboard[i-c][j] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j] = self.boardstate.board[i-c][j]
                         if leftup == True:
-                            if j-c < 0 or i+c > 7 or board[i+c][j-c].isupper():
+                            if j-c < 0 or i+c > 7 or checkboard[i+c][j-c].isupper():
                                 leftup = False
-                            elif board[i+c][j-c].islower():
+                            elif checkboard[i+c][j-c].islower():
                                 leftup = False
-                                self.boardstate.checkboard[i+c][j-c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j-c] = board[i+c][j-c]
+                                checkboard[i+c][j-c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j-c] = self.boardstate.board[i+c][j-c]
                             else:
-                                self.boardstate.checkboard[i+c][j-c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j-c] = board[i+c][j-c]
+                                checkboard[i+c][j-c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j-c] = self.boardstate.board[i+c][j-c]
 
                         if leftdown == True:
-                            if j-c < 0 or i-c < 0 or board[i-c][j-c].isupper():
+                            if j-c < 0 or i-c < 0 or checkboard[i-c][j-c].isupper():
                                 leftdown = False
-                            elif board[i-c][j-c].islower():
+                            elif checkboard[i-c][j-c].islower():
                                 leftdown = False
-                                self.boardstate.checkboard[i-c][j-c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j-c] = board[i-c][j-c]
+                                checkboard[i-c][j-c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j-c] = self.boardstate.board[i-c][j-c]
                             else:
-                                self.boardstate.checkboard[i-c][j-c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j-c] = board[i-c][j-c]
+                                checkboard[i-c][j-c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j-c] = self.boardstate.board[i-c][j-c]
 
                         if rightup == True:
-                            if j+c > 7 or i+c > 7 or board[i+c][j+c].isupper():
+                            if j+c > 7 or i+c > 7 or checkboard[i+c][j+c].isupper():
                                 rightup = False
-                            elif board[i+c][j+c].islower():
+                            elif checkboard[i+c][j+c].islower():
                                 rightup = False
-                                self.boardstate.checkboard[i+c][j+c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j+c] = board[i+c][j+c]
+                                checkboard[i+c][j+c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j+c] = self.boardstate.board[i+c][j+c]
                             else:
-                                self.boardstate.checkboard[i+c][j+c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i+c][j+c] = board[i+c][j+c]
+                                checkboard[i+c][j+c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i+c][j+c] = self.boardstate.board[i+c][j+c]
 
                         if rightdown == True:
-                            if j+c > 7 or i-c < 0 or board[i-c][j+c].isupper():
+                            if j+c > 7 or i-c < 0 or checkboard[i-c][j+c].isupper():
                                 rightdown = False
-                            elif board[i-c][j+c].islower():
+                            elif checkboard[i-c][j+c].islower():
                                 rightdown = False
-                                self.boardstate.checkboard[i-c][j+c] = 'Q'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j+c] = board[i-c][j+c]
+                                checkboard[i-c][j+c] = 'Q'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j+c] = self.boardstate.board[i-c][j+c]
                             else:
-                                self.boardstate.checkboard[i-c][j+c] = 'B'
-                                self.boardstate.printboard(self.boardstate.checkboard)
-                                if self.kingcheck(self.boardstate.checkboard) == False:
-                                    print("Checking!")
-                                self.boardstate.checkboard[i-c][j+c] = board[i-c][j+c]
+                                checkboard[i-c][j+c] = 'B'
+                                
+                                if self.kingcheck(checkboard, True) == False:
+                                    checkmate = True
+                                checkboard[i-c][j+c] = self.boardstate.board[i-c][j+c]
+        self.boardstate.printboard(self.boardstate.board)
+        input()
         return checkmate
